@@ -1,0 +1,20 @@
+parameters:
+- name: model_name
+  type: string
+- name: model_version
+  type: string
+- name: registry_name
+  type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Share AML model from workspace to registry
+    continueOnError: true
+    inputs: 
+      azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
+      scriptType: bash
+      workingDirectory: $(System.DefaultWorkingDirectory)
+      scriptLocation: inlineScript
+      inlineScript: |
+        # share model registered in workspace to registry
+        az ml model share --name ${{ parameters.model_name }} --version ${{ parameters.model_version }} --registry-name ${{ parameters.registry_name }} --share-with-name ${{ parameters.model_name }} --share-with-version ${{ parameters.model_version }}
